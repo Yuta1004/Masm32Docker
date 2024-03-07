@@ -1,8 +1,12 @@
 IMAGE := jwasm:debian
 
 # User Settings
-TARGET_ASM := src/main.asm
 GDBGUI_PORT := 8080
+
+# Target Files
+SRCS := $(wildcard src/*.asm)
+OBJS := $(SRCS:.asm=.o)
+OUT := a.out
 
 # Build Options
 DOCKER_OPTS :=\
@@ -26,14 +30,14 @@ GDBGUI_OPTS :=\
 	-n
 
 # User Commands
-run: $(TARGET_ASM)
+run: $(SRCS)
 	docker run $(DOCKER_OPTS) make run.container
 
 debug:
 	docker run $(DOCKER_OPTS) make debug.container
 
 clean:
-	rm -rf main *.o
+	rm -rf *.out src/*.o
 
 image:
 	docker build -t $(IMAGE) .
@@ -41,14 +45,15 @@ image:
 # In container commands
 run.container:
 	make build.container
-	./main
+	./$(OUT)
 
 debug.container:
 	make build.container
-	gdbgui $(GDBGUI_OPTS) /workdir/asm/main
+	gdbgui $(GDBGUI_OPTS) $(OUT)
 
-build.container:
-	jwasm $(JWASM_OTPS) $(TARGET_ASM)
-	gcc $(GCC_OPTS) -o main main.o
+build.container: $(SRCS)
+	jwasm $(JWASM_OTPS) $(SRCS)
+	mv *.o src/
+	gcc $(GCC_OPTS) -o $(OUT) $(OBJS)
 
-.PHONY: run.container debug debug.container build.container
+.PHONY: debug run.container debug.container
