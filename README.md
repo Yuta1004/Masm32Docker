@@ -7,10 +7,24 @@
 
 ## Command
 
-```
-// Setup
-$ make image
+### Setup(once)
 
-// Build & Run
+```
+$ make image
+```
+
+### Run
+
+```
 $ make run
+```
+
+### Debug
+
+```
+// default (localhost:8080)
+$ make debug
+
+// with port option
+$ make debug GDBGUI_PORT=xxxx
 ```
