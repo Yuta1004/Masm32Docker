@@ -2,9 +2,20 @@ IMAGE := jwasm:debian
 
 SRC := $(wildcard src/*.asm)
 
-DOCKER_OPTS := --rm -it -v $(shell pwd):/workdir/asm -w /workdir/asm $(IMAGE)
-JWASM_OTPS := -elf -Zf -zze -zcw
-GCC_OPTS := -m32
+DOCKER_OPTS :=\
+	--rm \
+	-it \
+	-v $(shell pwd):/workdir/asm \
+	-w /workdir/asm $(IMAGE)
+JWASM_OTPS :=\
+	-elf \
+	-Zf \
+	-zze \
+	-zcw
+GCC_OPTS :=\
+	-m32 \
+	-O0 \
+	-g3
 
 run: $(SRC)
 	docker run $(DOCKER_OPTS) make run.container
